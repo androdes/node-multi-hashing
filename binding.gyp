@@ -73,7 +73,8 @@
                 "yescrypt/yescrypt-opt.c",
                 # "yescrypt/yescrypt-platform.c",
                 # "yescrypt/yescrypt-simd.c",
-                # "yescrypt/yescryptcommon.c"              
+                # "yescrypt/yescryptcommon.c",
+                "sha256d.c"
                 
 
             ],

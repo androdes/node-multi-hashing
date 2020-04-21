@@ -26,6 +26,7 @@ extern "C"
 #include "quark.h"
 #include "qubit.h"
 #include "s3.h"
+#include "sha256d.h"
 // #include "scryptjane.h"
 #include "scryptn.h"
 #include "sha1.h"
@@ -697,6 +698,27 @@ NAN_METHOD(geek)
     info.GetReturnValue().Set(Nan::NewBuffer(output, 32).ToLocalChecked());
 }
 
+NAN_METHOD(sha256d)
+{
+
+    if (info.Length() < 1)
+        return THROW_ERROR_EXCEPTION("You must provide one argument.");
+
+    Local<Object> target = Nan::To<Object>(info[0]).ToLocalChecked();
+
+    if (!Buffer::HasInstance(target))
+        return THROW_ERROR_EXCEPTION("Argument should be a buffer object.");
+
+    char *input = Buffer::Data(target);
+    char *output = (char *)malloc(sizeof(char) * 32);
+
+    uint32_t input_len = Buffer::Length(target);
+
+    sha256d_hash(input, output, input_len);
+
+    info.GetReturnValue().Set(Nan::NewBuffer(output, 32).ToLocalChecked());
+}
+
 NAN_MODULE_INIT(init)
 {
     Nan::Set(target, Nan::New("lyra2z").ToLocalChecked(), Nan::GetFunction(Nan::New<FunctionTemplate>(lyra2z)).ToLocalChecked());
@@ -727,6 +749,7 @@ NAN_MODULE_INIT(init)
     Nan::Set(target, Nan::New("neoscrypt").ToLocalChecked(), Nan::GetFunction(Nan::New<FunctionTemplate>(neoscrypt)).ToLocalChecked());
     Nan::Set(target, Nan::New("yescrypt").ToLocalChecked(), Nan::GetFunction(Nan::New<FunctionTemplate>(yescrypt)).ToLocalChecked());
     Nan::Set(target, Nan::New("geek").ToLocalChecked(), Nan::GetFunction(Nan::New<FunctionTemplate>(geek)).ToLocalChecked());
+    Nan::Set(target, Nan::New("sha256d").ToLocalChecked(), Nan::GetFunction(Nan::New<FunctionTemplate>(sha256d)).ToLocalChecked());
 }
 
 NODE_MODULE(multihashing, init)
